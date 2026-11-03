@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Word Mystery - เกมทายคำศัพท์ ป.3</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastel: {
+                            bg: '#F0FDF4',
+                            card: '#FFFFFF',
+                            teal: '#0D9488',
+                            tealLight: '#CCFBF1',
+                            mint: '#A7F3D0',
+                            blue: '#E0F2FE',
+                            yellow: '#FEF08A',
+                            orange: '#FFEDD5',
+                            coral: '#FCA5A5',
+                            text: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        sarabun: ['Sarabun', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #E6F4F1;
+            background-image: radial-gradient(#B2DFDB 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .font-game {
+            font-family: 'Fredoka', 'Sarabun', sans-serif;
+        }
+        .btn-bounce {
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .btn-bounce:active {
+            transform: scale(0.95);
+        }
+        .animate-pop {
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pulse-timer {
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.1); opacity: 0.8; color: #DC2626; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-3 md:p-6 text-pastel-text select-none">
+
+    <!-- Container Utama -->
+    <div class="w-full max-w-2xl bg-white rounded-3xl shadow-xl border-4 border-teal-200 overflow-hidden relative flex flex-col min-h-[600px]">
+
+        <!-- Sound Toggle Button -->
+        <button id="sound-btn" onclick="toggleSound()" class="absolute top-4 right-4 z-50 bg-teal-100 hover:bg-teal-200 text-teal-800 p-3 rounded-full shadow transition-all duration-200 focus:outline-none">
+            <i id="sound-icon" class="fas fa-volume-up text-xl w-6 h-6 flex items-center justify-center"></i>
+        </button>
+
+        <!-- HEADER BANNER -->
+        <div class="bg-teal-500 text-white p-4 text-center shadow-md relative">
+            <h1 class="font-game text-2xl md:text-3xl font-bold tracking-wide flex items-center justify-center gap-2">
+                <i class="fas fa-shapes text-yellow-300"></i> English Word Mystery
+            </h1>
+            <p class="text-xs md:text-sm font-medium text-teal-100 mt-1">เกมทายคำศัพท์ภาษาอังกฤษน่ารู้ (ระดับชั้น ป.3)</p>
+        </div>
+
+        <!-- 1. WELCOME SCREEN -->
+        <div id="welcome-screen" class="flex-1 flex flex-col items-center justify-between p-6 text-center animate-pop">
+            <div class="my-auto flex flex-col items-center">
+                <div class="w-36 h-36 md:w-44 md:h-44 bg-teal-100 rounded-full flex items-center justify-center mb-6 border-4 border-teal-300 shadow-inner">
+                    <svg class="w-24 h-24 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <h2 class="font-game text-2xl md:text-3xl font-bold text-teal-700 mb-2">ยินดีต้อนรับสู่อาณาจักรคำศัพท์!</h2>
+                <p class="text-gray-600 text-sm md:text-base max-w-md leading-relaxed mb-6">
+                    น้องๆ ต้องเติมตัวอักษรภาษาอังกฤษที่หายไปให้ถูกต้อง <br>
+                    <span class="text-teal-600 font-semibold">ข้อละ 20 วินาที</span> รับ 1 คะแนนเมื่อตอบถูก!
+                </p>
+
+                <div class="bg-teal-50 border-2 border-teal-200 rounded-2xl p-4 mb-6 max-w-sm text-left">
+                    <div class="flex items-center gap-2 text-teal-800 font-bold mb-1">
+                        <i class="fas fa-star text-yellow-500"></i> กติกาการเล่น:
+                    </div>
+                    <ul class="text-xs md:text-sm text-gray-600 list-disc list-inside space-y-1">
+                        <li>เลือกรอบเล่นแบบ 10 คำศัพท์</li>
+                        <li>กดปุ่มตัวอักษรเพื่อตอบ</li>
+                        <li>มีคำใบ้ภาษาไทยช่วยเหลือ</li>
+                    </ul>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="btn-bounce w-full max-w-xs bg-emerald-500 hover:bg-emerald-600 text-white font-game text-xl font-bold py-4 px-8 rounded-2xl shadow-lg border-b-4 border-emerald-700 flex items-center justify-center gap-3">
+                <i class="fas fa-play"></i> เริ่มเล่นเกมเลย!
+            </button>
+        </div>
+
+        <!-- 2. GAME BOARD SCREEN -->
+        <div id="game-screen" class="hidden flex-1 flex flex-col justify-between p-4 md:p-6">
+            <!-- HUD / Top Bar -->
+            <div class="flex justify-between items-center bg-teal-50 p-3 md:p-4 rounded-2xl border-2 border-teal-100 mb-4">
+                <!-- Score -->
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center text-white shadow">
+                        <i class="fas fa-trophy text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 font-bold">คะแนน</div>
+                        <div id="score-text" class="font-game text-xl font-bold text-teal-800">0</div>
+                    </div>
+                </div>
+
+                <!-- Word Counter -->
+                <div class="text-center bg-white px-4 py-1.5 rounded-xl border border-teal-200 shadow-sm">
+                    <span class="text-xs text-gray-500 block font-semibold">ข้อที่</span>
+                    <span id="word-progress" class="font-game text-lg font-bold text-teal-600">1/10</span>
+                </div>
+
+                <!-- Timer -->
+                <div class="flex items-center gap-2">
+                    <div class="text-right">
+                        <div class="text-xs text-gray-500 font-bold">เวลาเหลือ</div>
+                        <div id="timer-text" class="font-game text-xl font-bold text-emerald-600">20s</div>
+                    </div>
+                    <div id="timer-icon-bg" class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow transition-colors">
+                        <i class="fas fa-clock text-lg"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Question Area -->
+            <div class="flex-1 flex flex-col items-center justify-center my-2">
+                <!-- Word Image Display (Shown when correct / placeholder) -->
+                <div id="image-container" class="w-36 h-36 md:w-44 md:h-44 bg-slate-100 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center mb-3 shadow-inner relative overflow-hidden transition-all duration-300">
+                    <div id="image-placeholder" class="text-center text-slate-400 p-2">
+                        <i class="fas fa-image text-3xl mb-1 block"></i>
+                        <span class="text-xs">ตอบถูกต้องเพื่อปลดล็อกรูปภาพ</span>
+                    </div>
+                    <div id="svg-display" class="w-full h-full p-3 hidden animate-pop"></div>
+                </div>
+
+                <!-- Thai Hint -->
+                <div class="bg-amber-100 border border-amber-300 px-4 py-1.5 rounded-full mb-4 text-amber-900 font-bold text-sm md:text-base flex items-center gap-2 shadow-sm">
+                    <i class="fas fa-lightbulb text-amber-500"></i>
+                    <span>คำใบ้: <span id="hint-text" class="text-amber-800">...</span></span>
+                </div>
+
+                <!-- Missing Word Display -->
+                <div id="word-slots" class="flex flex-wrap justify-center gap-2 md:gap-3 mb-6 font-game text-3xl md:text-4xl font-bold">
+                    <!-- Word Slots Javascript Injected Here -->
+                </div>
+            </div>
+
+            <!-- Virtual Keyboard -->
+            <div id="keyboard" class="grid grid-cols-7 gap-1.5 md:gap-2 max-w-lg mx-auto w-full pt-2">
+                <!-- Keyboard buttons JS injected -->
+            </div>
+        </div>
+
+        <!-- 3. GAME OVER / SUMMARY SCREEN -->
+        <div id="summary-screen" class="hidden flex-1 flex flex-col items-center justify-between p-6 text-center animate-pop">
+            <div class="w-full my-auto flex flex-col items-center">
+                <div id="result-icon-bg" class="w-24 h-24 rounded-full bg-yellow-100 border-4 border-yellow-400 flex items-center justify-center mb-3 shadow">
+                    <i id="result-icon" class="fas fa-crown text-4xl text-yellow-500"></i>
+                </div>
+                
+                <h2 id="result-title" class="font-game text-2xl md:text-3xl font-bold text-teal-800 mb-1">เก่งมากๆ เลย!</h2>
+                <p id="result-subtitle" class="text-gray-600 text-sm mb-4">น้องได้เรียนรู้คำศัพท์ใหม่มากมายวันนี้</p>
+
+                <!-- Final Score Box -->
+                <div class="bg-teal-50 border-2 border-teal-200 rounded-2xl p-4 w-full max-w-sm mb-4 flex items-center justify-around shadow-sm">
+                    <div>
+                        <div class="text-xs text-gray-500 font-bold">คะแนนรวม</div>
+                        <div class="font-game text-3xl font-bold text-teal-600"><span id="final-score">0</span> / 10</div>
+                    </div>
+                    <div class="h-10 w-0.5 bg-teal-200"></div>
+                    <div>
+                        <div class="text-xs text-gray-500 font-bold">ประเมินผล</div>
+                        <div id="final-rating" class="font-game text-lg font-bold text-amber-500">ยอดเยี่ยม ⭐</div>
+                    </div>
+                </div>
+
+                <!-- Mastered Words List -->
+                <div class="w-full max-w-sm text-left mb-2">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1">
+                        <i class="fas fa-book-open text-teal-500"></i> คำศัพท์ในรอบนี้:
+                    </h3>
+                    <div id="mastered-words-list" class="max-h-36 overflow-y-auto bg-slate-50 border border-slate-200 rounded-xl p-2 space-y-1 text-xs md:text-sm">
+                        <!-- JS injected list items -->
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="btn-bounce w-full max-w-xs bg-teal-600 hover:bg-teal-700 text-white font-game text-lg font-bold py-3.5 px-6 rounded-2xl shadow-lg border-b-4 border-teal-800 flex items-center justify-center gap-2">
+                <i class="fas fa-redo"></i> เล่นอีกครั้ง
+            </button>
+        </div>
+
+    </div>
+
+    <!-- AUDIO SYNTHESIS & SOUND FX SCRIPTS -->
+    <script>
+        // Sound System Web Audio API Synthesizer
+        let soundEnabled = true;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playTone(freq, type, duration, delay = 0) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                setTimeout(() => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + duration);
+                }, delay);
+            } catch (e) {
+                console.log("Audio playback error:", e);
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            if (type === 'correct') {
+                playTone(523.25, 'triangle', 0.15, 0);   // C5
+                playTone(659.25, 'triangle', 0.15, 100); // E5
+                playTone(783.99, 'triangle', 0.3, 200);  // G5
+            } else if (type === 'wrong') {
+                playTone(220, 'sawtooth', 0.2, 0);       // A3
+                playTone(180, 'sawtooth', 0.3, 150);     // F3
+            } else if (type === 'click') {
+                playTone(400, 'sine', 0.05, 0);
+            } else if (type === 'win') {
+                playTone(523.25, 'triangle', 0.1, 0);
+                playTone(659.25, 'triangle', 0.1, 100);
+                playTone(783.99, 'triangle', 0.1, 200);
+                playTone(1046.50, 'triangle', 0.4, 300);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            const btn = document.getElementById('sound-btn');
+            if (soundEnabled) {
+                icon.className = "fas fa-volume-up text-xl w-6 h-6 flex items-center justify-center";
+                btn.classList.remove('bg-gray-200', 'text-gray-500');
+                btn.classList.add('bg-teal-100', 'text-teal-800');
+            } else {
+                icon.className = "fas fa-volume-mute text-xl w-6 h-6 flex items-center justify-center";
+                btn.classList.remove('bg-teal-100', 'text-teal-800');
+                btn.classList.add('bg-gray-200', 'text-gray-500');
+            }
+        }
+
+        // Web Speech API for Word Pronunciation
+        function speakWord(word) {
+            if ('speechSynthesis' in window && soundEnabled) {
+                window.speechSynthesis.cancel(); // stop current speech
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85; // slightly slower for primary school kids
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+    </script>
+
+    <!-- GAME LOGIC & VOCABULARY DATABASE -->
+    <script>
+        // Grade 3 English Word Database with Inline Vector SVGs
+        const vocabList = [
+            {
+                word: "APPLE",
+                hint: "แอปเปิล (ผลไม้สีแดงหรือเขียว)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M50 25 C40 10, 25 15, 20 25 C10 40, 15 70, 35 85 C45 92, 50 88, 50 88 C50 88, 55 92, 65 85 C85 70, 90 40, 80 25 C75 15, 60 10, 50 25 Z" fill="#EF4444"/><path d="M50 25 C52 15, 58 10, 65 8 C62 18, 55 22, 50 25 Z" fill="#15803D"/><path d="M50 25 C48 18, 45 12, 42 8" stroke="#78350F" stroke-width="3" fill="none"/></svg>`
+            },
+            {
+                word: "BANANA",
+                hint: "กล้วย (ผลไม้สีเหลืองทรงยาว)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M20 30 C30 20, 65 20, 80 50 C90 70, 70 85, 50 85 C30 85, 15 65, 20 30 Z" fill="#EAB308"/><path d="M18 28 C25 22, 60 22, 76 50 C82 62, 65 78, 50 78" fill="none" stroke="#CA8A04" stroke-width="3"/><path d="M78 50 C85 55, 82 65, 78 68" stroke="#854D0E" stroke-width="3" fill="none"/></svg>`
+            },
+            {
+                word: "CAT",
+                hint: "แมว (สัตว์เลี้ยงร้องเหมียวๆ)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="55" r="30" fill="#F97316"/><polygon points="25,35 20,10 40,25" fill="#F97316"/><polygon points="75,35 80,10 60,25" fill="#F97316"/><circle cx="40" cy="50" r="4" fill="#1E293B"/><circle cx="60" cy="50" r="4" fill="#1E293B"/><polygon points="47,58 53,58 50,62" fill="#F43F5E"/><path d="M30 60 L15 58 M30 64 L15 68 M70 60 L85 58 M70 64 L85 68" stroke="#1E293B" stroke-width="2"/></svg>`
+            },
+            {
+                word: "DOG",
+                hint: "สุนัข / หมา (สัตว์เลี้ยงซื่อสัตย์)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="28" fill="#D97706"/><path d="M22 35 C15 45, 20 65, 28 55 Z" fill="#B45309"/><path d="M78 35 C85 45, 80 65, 72 55 Z" fill="#B45309"/><circle cx="40" cy="45" r="4" fill="#1E293B"/><circle cx="60" cy="45" r="4" fill="#1E293B"/><ellipse cx="50" cy="56" rx="7" ry="5" fill="#1E293B"/><path d="M46 64 Q50 70 54 64" fill="none" stroke="#1E293B" stroke-width="2"/></svg>`
+            },
+            {
+                word: "ELEPHANT",
+                hint: "ช้าง (สัตว์ตัวใหญ่มีงวง)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="28" fill="#94A3B8"/><circle cx="22" cy="45" r="14" fill="#94A3B8"/><circle cx="78" cy="45" r="14" fill="#94A3B8"/><circle cx="40" cy="45" r="3.5" fill="#1E293B"/><circle cx="60" cy="45" r="3.5" fill="#1E293B"/><path d="M50 55 C50 75, 65 75, 60 65" fill="none" stroke="#64748B" stroke-width="6" stroke-linecap="round"/></svg>`
+            },
+            {
+                word: "MONKEY",
+                hint: "ลิง (สัตว์ชอบซนกินกล้วย)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="28" fill="#78350F"/><circle cx="22" cy="45" r="10" fill="#78350F"/><circle cx="22" cy="45" r="6" fill="#FDE047"/><circle cx="78" cy="45" r="10" fill="#78350F"/><circle cx="78" cy="45" r="6" fill="#FDE047"/><ellipse cx="50" cy="56" rx="18" ry="14" fill="#FDE047"/><circle cx="40" cy="42" r="3.5" fill="#1E293B"/><circle cx="60" cy="42" r="3.5" fill="#1E293B"/><path d="M44 60 Q50 66 56 60" fill="none" stroke="#78350F" stroke-width="2"/></svg>`
+            },
+            {
+                word: "RABBIT",
+                hint: "กระต่าย (สัตว์หูยาวชอบกินแครอท)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><ellipse cx="38" cy="25" rx="7" ry="20" fill="#E2E8F0"/><ellipse cx="38" cy="25" rx="4" ry="14" fill="#F472B6"/><ellipse cx="62" cy="25" rx="7" ry="20" fill="#E2E8F0"/><ellipse cx="62" cy="25" rx="4" ry="14" fill="#F472B6"/><circle cx="50" cy="58" r="25" fill="#F8FAFC"/><circle cx="40" cy="52" r="3.5" fill="#1E293B"/><circle cx="60" cy="52" r="3.5" fill="#1E293B"/><polygon points="47,60 53,60 50,64" fill="#F472B6"/></svg>`
+            },
+            {
+                word: "PENCIL",
+                hint: "ดินสอ (อุปกรณ์ใช้วาดเขียน)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M25 75 L70 30 L80 40 L35 85 Z" fill="#F59E0B"/><polygon points="25,75 15,85 35,85" fill="#FDE047"/><polygon points="15,85 12,88 18,88" fill="#1E293B"/><rect x="68" y="22" width="12" height="14" transform="rotate(45 74 29)" fill="#EC4899"/></svg>`
+            },
+            {
+                word: "SCHOOL",
+                hint: "โรงเรียน (สถานที่เรียนหนังสือ)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M15 85 L15 45 L50 20 L85 45 L85 85 Z" fill="#3B82F6"/><polygon points="50,15 10,48 90,48" fill="#EF4444"/><rect x="40" y="60" width="20" height="25" fill="#1E293B"/><rect x="25" y="55" width="10" height="10" fill="#93C5FD"/><rect x="65" y="55" width="10" height="10" fill="#93C5FD"/></svg>`
+            },
+            {
+                word: "SUN",
+                hint: "ดวงอาทิตย์ (ส่องแสงยามเช้า)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="22" fill="#F59E0B"/><path d="M50 10 L50 20 M50 80 L50 90 M10 50 L20 50 M80 50 L90 50 M22 22 L29 29 M71 71 L78 78 M22 78 L29 71 M71 29 L78 22" stroke="#F59E0B" stroke-width="6" stroke-linecap="round"/></svg>`
+            },
+            {
+                word: "FLOWER",
+                hint: "ดอกไม้ (มีกลิ่นหอมและสวยงาม)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="32" r="12" fill="#EC4899"/><circle cx="68" cy="50" r="12" fill="#EC4899"/><circle cx="50" cy="68" r="12" fill="#EC4899"/><circle cx="32" cy="50" r="12" fill="#EC4899"/><circle cx="50" cy="50" r="12" fill="#FACC15"/></svg>`
+            },
+            {
+                word: "BOOK",
+                hint: "หนังสือ (ใช้อ่านเพิ่มความรู้)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M20 25 C35 20, 48 28, 50 30 C52 28, 65 20, 80 25 L80 75 C65 70, 52 78, 50 80 C48 78, 35 70, 20 75 Z" fill="#60A5FA"/><path d="M50 30 L50 80" stroke="#1E3A8A" stroke-width="3"/></svg>`
+            },
+            {
+                word: "TIGER",
+                hint: "เสือ (สัตว์ป่ามีลายพร้อย)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="28" fill="#F97316"/><polygon points="25,35 20,10 40,25" fill="#F97316"/><polygon points="75,35 80,10 60,25" fill="#F97316"/><path d="M38 30 L42 40 L46 30 M54 30 L58 40 L62 30" stroke="#1E293B" stroke-width="3"/><circle cx="40" cy="50" r="4" fill="#1E293B"/><circle cx="60" cy="50" r="4" fill="#1E293B"/><polygon points="47,58 53,58 50,62" fill="#1E293B"/></svg>`
+            },
+            {
+                word: "ZEBRA",
+                hint: "ม้าลาย (สัตว์มีลายสีขาวสลับดำ)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="28" fill="#F8FAFC" stroke="#1E293B" stroke-width="2"/><path d="M30 40 L45 45 L32 52 M70 40 L55 45 L68 52" stroke="#1E293B" stroke-width="4"/><circle cx="40" cy="48" r="3.5" fill="#1E293B"/><circle cx="60" cy="48" r="3.5" fill="#1E293B"/><ellipse cx="50" cy="62" rx="10" ry="6" fill="#1E293B"/></svg>`
+            },
+            {
+                word: "DUCK",
+                hint: "เป็ด (สัตว์ปีกร้องก้าบๆ ว่ายน้ำได้)",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="45" cy="50" r="22" fill="#FACC15"/><path d="M55 48 Q75 48 70 58 Q55 62 55 48 Z" fill="#F97316"/><circle cx="38" cy="42" r="3.5" fill="#1E293B"/></svg>`
+            }
+        ];
+
+        // Game State Variables
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let timeLeft = 20;
+        let timerInterval = null;
+        let currentWordObj = null;
+        let missingIndices = [];
+        let wordState = []; // Array tracking revealed letters
+        let resultsHistory = [];
+
+        // DOM Element Selectors
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const summaryScreen = document.getElementById('summary-screen');
+        
+        const scoreText = document.getElementById('score-text');
+        const wordProgress = document.getElementById('word-progress');
+        const timerText = document.getElementById('timer-text');
+        const timerIconBg = document.getElementById('timer-icon-bg');
+        
+        const imagePlaceholder = document.getElementById('image-placeholder');
+        const svgDisplay = document.getElementById('svg-display');
+        const hintText = document.getElementById('hint-text');
+        const wordSlotsContainer = document.getElementById('word-slots');
+        const keyboardContainer = document.getElementById('keyboard');
+
+        // Shuffle Array Helper
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // START GAME
+        function startGame() {
+            playSound('click');
+            // Reset state
+            score = 0;
+            currentIndex = 0;
+            resultsHistory = [];
+            currentQuestions = shuffleArray(vocabList).slice(0, 10); // Select 10 random words
+
+            // UI Screen Switching
+            welcomeScreen.classList.add('hidden');
+            summaryScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+
+            loadQuestion();
+        }
+
+        // LOAD CURRENT QUESTION
+        function loadQuestion() {
+            clearInterval(timerInterval);
+            timeLeft = 20;
+            updateTimerUI();
+
+            currentWordObj = currentQuestions[currentIndex];
+            const word = currentWordObj.word;
+            
+            // Determine Missing Letters Index (1 missing letter for short words, 2 for longer)
+            missingIndices = [];
+            const numToHide = word.length > 5 ? 2 : 1;
+            
+            while (missingIndices.length < numToHide) {
+                const randIdx = Math.floor(Math.random() * word.length);
+                if (!missingIndices.includes(randIdx)) {
+                    missingIndices.push(randIdx);
+                }
+            }
+
+            // Setup Word State
+            wordState = word.split('').map((char, index) => {
+                return missingIndices.includes(index) ? '_' : char;
+            });
+
+            // Reset UI Visuals
+            imagePlaceholder.classList.remove('hidden');
+            svgDisplay.classList.add('hidden');
+            svgDisplay.innerHTML = '';
+            hintText.textContent = currentWordObj.hint;
+            scoreText.textContent = score;
+            wordProgress.textContent = `${currentIndex + 1}/10`;
+
+            renderWordSlots();
+            renderKeyboard();
+
+            // Start Countdown Timer
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerUI();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        // UPDATE TIMER UI
+        function updateTimerUI() {
+            timerText.textContent = `${timeLeft}s`;
+            if (timeLeft <= 5) {
+                timerText.className = "font-game text-xl font-bold text-red-600 pulse-timer";
+                timerIconBg.className = "w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center text-white shadow";
+            } else {
+                timerText.className = "font-game text-xl font-bold text-emerald-600";
+                timerIconBg.className = "w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow";
+            }
+        }
+
+        // RENDER WORD SLOTS UI
+        function renderWordSlots() {
+            wordSlotsContainer.innerHTML = '';
+            wordState.forEach((char, idx) => {
+                const box = document.createElement('div');
+                const isMissing = missingIndices.includes(idx);
+                
+                box.className = `w-10 h-12 md:w-12 md:h-14 rounded-xl flex items-center justify-center shadow-md font-bold transition-all ${
+                    isMissing 
+                        ? (char === '_' ? 'bg-amber-50 border-2 border-dashed border-amber-400 text-amber-600' : 'bg-emerald-100 border-2 border-emerald-500 text-emerald-700 animate-pop')
+                        : 'bg-teal-500 text-white border-b-4 border-teal-700'
+                }`;
+                
+                box.textContent = char === '_' ? '?' : char;
+                wordSlotsContainer.appendChild(box);
+            });
+        }
+
+        // RENDER VIRTUAL KEYBOARD
+        function renderKeyboard() {
+            keyboardContainer.innerHTML = '';
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+            
+            alphabet.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = "btn-bounce bg-slate-100 hover:bg-teal-100 text-teal-800 font-game font-bold text-base md:text-lg py-2 rounded-xl shadow border-b-2 border-slate-300 focus:outline-none transition-colors";
+                btn.textContent = letter;
+                btn.onclick = () => handleGuess(letter, btn);
+                keyboardContainer.appendChild(btn);
+            });
+        }
+
+        // HANDLE LETTER GUESS
+        function handleGuess(letter, buttonEl) {
+            playSound('click');
+
+            // Find if guessed letter matches any missing position
+            let correctGuess = false;
+            missingIndices.forEach(idx => {
+                if (currentWordObj.word[idx] === letter && wordState[idx] === '_') {
+                    wordState[idx] = letter;
+                    correctGuess = true;
+                }
+            });
+
+            if (correctGuess) {
+                buttonEl.disabled = true;
+                buttonEl.className = "bg-emerald-500 text-white font-game font-bold text-base md:text-lg py-2 rounded-xl shadow opacity-50 cursor-not-allowed";
+                renderWordSlots();
+
+                // Check if Word is Complete
+                if (!wordState.includes('_')) {
+                    handleCorrectWord();
+                }
+            } else {
+                // Wrong letter
+                playSound('wrong');
+                buttonEl.disabled = true;
+                buttonEl.className = "bg-red-100 text-red-400 font-game font-bold text-base md:text-lg py-2 rounded-xl shadow opacity-40 cursor-not-allowed";
+            }
+        }
+
+        // HANDLE CORRECT ANSWER
+        function handleCorrectWord() {
+            clearInterval(timerInterval);
+            score++;
+            scoreText.textContent = score;
+
+            playSound('correct');
+            speakWord(currentWordObj.word);
+
+            // Record Result
+            resultsHistory.push({
+                word: currentWordObj.word,
+                hint: currentWordObj.hint,
+                correct: true
+            });
+
+            // Reveal Image Reward
+            imagePlaceholder.classList.add('hidden');
+            svgDisplay.innerHTML = currentWordObj.svg;
+            svgDisplay.classList.remove('hidden');
+
+            // Trigger Confetti Blast
+            confetti({
+                particleCount: 40,
+                spread: 60,
+                origin: { y: 0.6 }
+            });
+
+            // Disable all keyboard keys
+            const keys = keyboardContainer.querySelectorAll('button');
+            keys.forEach(k => k.disabled = true);
+
+            // Delay before next question
+            setTimeout(() => {
+                nextQuestion();
+            }, 2200);
+        }
+
+        // HANDLE TIMEOUT
+        function handleTimeOut() {
+            playSound('wrong');
+            
+            // Reveal complete word in slots
+            wordState = currentWordObj.word.split('');
+            renderWordSlots();
+
+            // Record Result
+            resultsHistory.push({
+                word: currentWordObj.word,
+                hint: currentWordObj.hint,
+                correct: false
+            });
+
+            // Reveal Image
+            imagePlaceholder.classList.add('hidden');
+            svgDisplay.innerHTML = currentWordObj.svg;
+            svgDisplay.classList.remove('hidden');
+
+            // Disable keyboard
+            const keys = keyboardContainer.querySelectorAll('button');
+            keys.forEach(k => k.disabled = true);
+
+            // Delay before next question
+            setTimeout(() => {
+                nextQuestion();
+            }, 2200);
+        }
+
+        // ADVANCE TO NEXT QUESTION OR END GAME
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < currentQuestions.length) {
+                loadQuestion();
+            } else {
+                showSummaryScreen();
+            }
+        }
+
+        // SHOW SUMMARY SCREEN
+        function showSummaryScreen() {
+            gameScreen.classList.add('hidden');
+            summaryScreen.classList.remove('hidden');
+
+            playSound('win');
+
+            // Update Final Score Display
+            document.getElementById('final-score').textContent = score;
+
+            // Rating & Icon Logic
+            const resultTitle = document.getElementById('result-title');
+            const resultSubtitle = document.getElementById('result-subtitle');
+            const finalRating = document.getElementById('final-rating');
+            const resultIcon = document.getElementById('result-icon');
+            const resultIconBg = document.getElementById('result-icon-bg');
+
+            if (score >= 8) {
+                resultTitle.textContent = "เก่งกาจสุดๆ ไปเลย! 🎉";
+                resultSubtitle.textContent = "น้องมีความรู้คำศัพท์ภาษาอังกฤษระดับยอดเยี่ยม";
+                finalRating.textContent = "ดีเยี่ยม ⭐⭐⭐";
+                resultIcon.className = "fas fa-crown text-4xl text-yellow-500";
+                resultIconBg.className = "w-24 h-24 rounded-full bg-yellow-100 border-4 border-yellow-400 flex items-center justify-center mb-3 shadow";
+                
+                confetti({
+                    particleCount: 100,
+                    spread: 80,
+                    origin: { y: 0.5 }
+                });
+            } else if (score >= 5) {
+                resultTitle.textContent = "ทำได้ดีมากครับ! 👍";
+                resultSubtitle.textContent = "ฝึกฝนอีกนิดจะเก่งขึ้นเรื่อยๆ แน่นอน";
+                finalRating.textContent = "ผ่านเกณฑ์ ⭐⭐";
+                resultIcon.className = "fas fa-star text-4xl text-teal-500";
+                resultIconBg.className = "w-24 h-24 rounded-full bg-teal-100 border-4 border-teal-400 flex items-center justify-center mb-3 shadow";
+            } else {
+                resultTitle.textContent = "พยายามได้ดีมากครับ! 💪";
+                resultSubtitle.textContent = "ลองเล่นใหม่อีกครั้งเพื่อทบทวนคำศัพท์นะ";
+                finalRating.textContent = "ควรทบทวน ⭐";
+                resultIcon.className = "fas fa-smile text-4xl text-blue-500";
+                resultIconBg.className = "w-24 h-24 rounded-full bg-blue-100 border-4 border-blue-400 flex items-center justify-center mb-3 shadow";
+            }
+
+            // Render Mastered Words List
+            const listContainer = document.getElementById('mastered-words-list');
+            listContainer.innerHTML = '';
+
+            resultsHistory.forEach(item => {
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between p-2 rounded-lg bg-white border border-slate-100 shadow-sm";
+                row.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="${item.correct ? 'text-emerald-500' : 'text-red-400'}">
+                            <i class="fas ${item.correct ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                        </span>
+                        <span class="font-game font-bold text-gray-800">${item.word}</span>
+                        <span class="text-xs text-gray-500">(${item.hint.split(' ')[0]})</span>
+                    </div>
+                    <button onclick="speakWord('${item.word}')" class="text-teal-600 hover:text-teal-800 p-1 rounded focus:outline-none">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                `;
+                listContainer.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
